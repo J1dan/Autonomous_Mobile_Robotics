@@ -15,7 +15,6 @@ def clustering(points, method):
         # Number of clusters in labels, ignoring noise if present.
         n_clusters_ = len(set(labels_db)) - (1 if -1 in labels_db else 0)
         n_noise_ = list(labels_db).count(-1)
-
         print("Estimated number of clusters: %d" % n_clusters_)
         print("Estimated number of noise points: %d" % n_noise_)
         return labels_db

@@ -2,6 +2,15 @@ import rospy
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs import point_cloud2
 import numpy as np
+import os
+import sys
+import pathlib
+import open3d as o3d
+import matplotlib.pyplot as plt
+sys.path.append(str(pathlib.Path(__file__).parent.parent))
+from libraries.clustering import clustering
+from libraries.ground_segmentation import ground_segmentation
+from libraries.visualization import vis 
 
 class PointCloudSubscriber(object):
     def __init__(self) -> None:
@@ -13,11 +22,17 @@ class PointCloudSubscriber(object):
         
         points = point_cloud2.read_points_list(
             msg, field_names=("x", "y", "z"))
+        points = np.array(points)
+        ground_cloud, segmented_cloud, index_ground, index_segmented = ground_segmentation(points)
 
-        print(points[0][0])
-
+        labels = clustering(segmented_cloud,'dbscan')
+        points = np.insert(points,3,0,axis = 1)
+        points[index_ground, 3] = 80
+        points[index_segmented, 3] = labels
+        vis(points[:,0:3],points[:,3])
 
 if __name__ =='__main__':
     rospy.init_node("pointcloud_subscriber")
     PointCloudSubscriber()
     rospy.spin()
+

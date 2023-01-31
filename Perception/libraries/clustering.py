@@ -49,7 +49,7 @@ def clustering(points, method):
         return labels_op
 
     if method == 'AgglomerativeClustering':
-        clustering = sklearn.cluster.AgglomerativeClustering(70).fit(points)
+        clustering = sklearn.cluster.AgglomerativeClustering(2).fit(points)
         return clustering.labels_
 
     if method == 'birch':

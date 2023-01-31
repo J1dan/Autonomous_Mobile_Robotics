@@ -12,7 +12,7 @@ def ExtractBBox(points,labels):
         cluster = np.array(cluster)
         cluster = o3d.utility.Vector3dVector(cluster)
         bbox = o3d.geometry.AxisAlignedBoundingBox()
-        bbox.create_from_points(cluster)
+        bbox = bbox.create_from_points(cluster)
         bboxes.append(bbox)
     return bboxes
 

@@ -8,6 +8,18 @@ import sklearn.cluster
 from sklearn import metrics
 
 def clustering(points, method):
+    ''' Perform clustering to the points using the method given
+    
+    Parameters
+    ----------
+    
+    `points` (`numpy.ndarray`): the point cloud to be clustered
+    `method` (`string`): the method used. Options: `'dbscan'`, `'kmeans'`, `'optics'`, `'meanshift'`, `'AgglomerativeClustering'`, `'birch'`
+
+    Returns
+    -------
+    `labels` (`numpy.ndarray`): The labels of each point
+    '''
     if method == 'dbscan':
         db = sklearn.cluster.DBSCAN(eps=2,min_samples=3).fit(points)#eps=1.8, min_samples=20
         labels_db = db.labels_

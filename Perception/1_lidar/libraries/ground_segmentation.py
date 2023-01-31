@@ -3,6 +3,22 @@ import numpy as np
 import math
 
 def ground_segmentation(data, method):
+    ''' Segment the ground points from the point cloud
+    
+    Parameters
+    ----------
+    
+    `data` (`numpy.ndarray`): the point cloud to be segmented 
+      
+    `method` (`string`): the method used. Options: `'RANSAC'`, `'brutal'`
+
+    Returns
+    -------
+    `ground_cloud` (`numpy.ndarray`): ground point cloud
+    `segmented_cloud` (`numpy.ndarray`): segmented point cloud without ground points
+    `idx_ground` (`list`): index of round point cloud
+    `idx_segmented` (`list`): index of ground point cloud
+    '''
     if method == 'RANSAC':
         # 屏蔽开始
         #初始化数据

@@ -23,7 +23,6 @@ print(np.shape(points))
 GROUND_SEGMENTATION = True
 if GROUND_SEGMENTATION:
     ground_cloud,segmented_cloud, index_ground, index_segmented = ground_segmentation(points[:,0:3],'brutal')
-
 x = points[:, 0]  # x position of point
 y = points[:, 1]  # y position of point
 z = points[:, 2]  # z position of point
@@ -49,6 +48,8 @@ points = points[points[:,4] > 0]
 
 #Bounding Box Extraction
 bboxes = ExtractBBox(segmented_cloud, labels)
+# for i in range(5):
+#     print(np.asarray(bboxes[i].get_box_points()))
 # o3d.visualization.draw_geometries(bboxes)
 
 #Visualization with ground points

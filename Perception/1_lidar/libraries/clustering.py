@@ -64,6 +64,6 @@ def clustering(points, method):
         return clustering.labels_
 
     if method == 'birch':
-        brc = sklearn.cluster.Birch(n_clusters=None).fit(points)
+        brc = sklearn.cluster.Birch(n_clusters=60).fit(points)
         labels_brc = brc.predict(points)
         return labels_brc

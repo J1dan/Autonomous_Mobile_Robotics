@@ -21,8 +21,6 @@ from libraries.BoundingBoxExtraction import ExtractBBox
 
 file_data = np.fromfile('/home/jidan/Documents/me5413/1_lidar/lidar_data/frame2.pcd.bin', dtype=np.float32)
 points = file_data.reshape((-1, 5))[:, :4]
-print(np.shape(points))
-# Points: (x, y, z, intensity)
 
 #Ground segmentation
 ground_cloud,segmented_cloud, index_ground, index_segmented = ground_segmentation(points[:,0:3],'brutal')

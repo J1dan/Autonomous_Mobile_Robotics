@@ -18,20 +18,30 @@ points = np.array([[-17.96630611,  -0.64812201,  -0.0965376 ],
  [-18.65408844,  -6.48405801 ,  0.46054742],
  [-17.84352991 , -6.22793832 ,  3.77335796]])
 print(np.shape(points))
-bboxes = points
+bbox = points
+# 0-3 1-6 2-1 3-0
+# 4-5 5-4 6-7 7-2
+bbox = np.array([bbox[3],bbox[6],bbox[1],bbox[0],bbox[5],bbox[4],bbox[7],bbox[2]])
+print(bbox)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 r = [-1,1]
 X, Y = np.meshgrid(r, r)
-ax.scatter3D(bboxes[:, 0], bboxes[:, 1], bboxes[:, 2])
-# 0-3 1-6 2-1 3-0
-# 4-5 5-4 6-7 7-2
-verts = [[bboxes[3],bboxes[6],bboxes[1],bboxes[0]],
- [bboxes[5],bboxes[4],bboxes[7],bboxes[2]],
- [bboxes[3],bboxes[6],bboxes[4],bboxes[5]],
- [bboxes[1],bboxes[0],bboxes[2],bboxes[7]],
- [bboxes[6],bboxes[1],bboxes[7],bboxes[4]],
- [bboxes[5],bboxes[2],bboxes[0],bboxes[3]]]
+ax.scatter3D(bbox[:, 0], bbox[:, 1], bbox[:, 2])
+
+# verts = [[bbox[3],bbox[6],bbox[1],bbox[0]],
+#  [bbox[5],bbox[4],bbox[7],bbox[2]],
+#  [bbox[3],bbox[6],bbox[4],bbox[5]],
+#  [bbox[1],bbox[0],bbox[2],bbox[7]],
+#  [bbox[6],bbox[1],bbox[7],bbox[4]],
+#  [bbox[5],bbox[2],bbox[0],bbox[3]]]
+
+verts = [[bbox[0],bbox[1],bbox[2],bbox[3]],
+[bbox[4],bbox[5],bbox[6],bbox[7]],
+[bbox[0],bbox[1],bbox[5],bbox[4]],
+[bbox[2],bbox[3],bbox[7],bbox[6]],
+[bbox[1],bbox[2],bbox[6],bbox[5]],
+[bbox[4],bbox[7],bbox[3],bbox[0]]]
 
 
 print(np.shape(verts))

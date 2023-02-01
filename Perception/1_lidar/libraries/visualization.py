@@ -28,21 +28,20 @@ def vis(points,labels,bboxes,method):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
 
-        for labels in np.unique(points[:,3]):
-            ax.scatter(points[:,0:3][points[:,3] == labels, 0], 
-                    points[:,0:3][points[:,3] == labels, 1], 
-                    points[:,0:3][points[:,3] == labels, 2],
+        for label in np.unique(labels):
+            ax.scatter(points[:,0:3][label == labels, 0], 
+                    points[:,0:3][label == labels, 1], 
+                    points[:,0:3][label == labels, 2],
                     s = 3,
-                    labels=str(labels))
+                    label=str(label))
         for bbox in bboxes:
-            bbox = np.asarray(bbox.get_box_points())
-            verts = [[bbox[3],bbox[6],bbox[1],bbox[0]],
-            [bbox[5],bbox[4],bbox[7],bbox[2]],
-            [bbox[3],bbox[6],bbox[4],bbox[5]],
-            [bbox[1],bbox[0],bbox[2],bbox[7]],
-            [bbox[6],bbox[1],bbox[7],bbox[4]],
-            [bbox[5],bbox[2],bbox[0],bbox[3]]]
+            verts = [[bbox[0],bbox[1],bbox[2],bbox[3]],
+            [bbox[4],bbox[5],bbox[6],bbox[7]],
+            [bbox[0],bbox[1],bbox[5],bbox[4]],
+            [bbox[2],bbox[3],bbox[7],bbox[6]],
+            [bbox[1],bbox[2],bbox[6],bbox[5]],
+            [bbox[4],bbox[7],bbox[3],bbox[0]]]
             ax.add_collection3d(Poly3DCollection(verts, facecolors=[0,0,0,0], linewidths=1, edgecolors='r'))
-
+        ax.view_init(elev=90, azim=-90)
         ax.legend()
         plt.show()

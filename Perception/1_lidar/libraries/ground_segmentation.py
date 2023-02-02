@@ -2,15 +2,15 @@ import random
 import numpy as np
 import math
 
-def ground_segmentation(data, method):
+def ground_segmentation(points, method='brutal'):
     ''' Segment the ground points from the point cloud
     
     Parameters
     ----------
     
-    `data` (`numpy.ndarray`): the point cloud to be segmented 
+    `points` (`numpy.ndarray`): point cloud to be segmented 
       
-    `method` (`string`): the method used. Options: `'RANSAC'`, `'brutal'`
+    `method` (`string`): method used. Options: `'RANSAC'`, `'brutal'`
 
     Returns
     -------
@@ -34,16 +34,16 @@ def ground_segmentation(data, method):
         pretotal = 0 #上一次inline的点数
         #希望的到正确模型的概率
         P = 0.99
-        n = len(data)    #点的数目
+        n = len(points)    #点的数目
         outline_ratio = 0.6   #e :outline_ratio   000002.bin：0.6    000001.bin: 0.5  000000.bin: 0.6   002979.bin：0.6
         for i in range(iters):
             ground_cloud = []
             idx_ground = []
             #step1 选择可以估计出模型的最小数据集，对于平面拟合来说，就是三个点
             sample_index = random.sample(range(n),3)    #重数据集中随机选取3个点
-            point1 = data[sample_index[0]]
-            point2 = data[sample_index[1]]
-            point3 = data[sample_index[2]]
+            point1 = points[sample_index[0]]
+            point2 = points[sample_index[1]]
+            point3 = points[sample_index[2]]
             #step2 求解模型
             ##先求解法向量
             point1_2 = (point1-point2)      #向量 poin1 -> point2
@@ -56,7 +56,7 @@ def ground_segmentation(data, method):
             d = -N.dot(point1)
             #step3 将所有数据带入模型，计算出“内点”的数目；(累加在一定误差范围内的适合当前迭代推出模型的数据)
             total_inlier = 0
-            pointn_1 = (data - point1)    #sample（三点）外的点 与 sample内的三点其中一点 所构成的向量
+            pointn_1 = (points - point1)    #sample（三点）外的点 与 sample内的三点其中一点 所构成的向量
             distance = abs(pointn_1.dot(N))/ np.linalg.norm(N)     #求距离
             ##使用距离判断inline
             idx_ground = (distance <= sigma)
@@ -77,18 +77,18 @@ def ground_segmentation(data, method):
         print("iters = %f" %iters)
         #提取分割后得点
         idx_segmented = np.logical_not(idx_ground)
-        ground_cloud = data[idx_ground]
-        segmented_cloud = data[idx_segmented]
+        ground_cloud = points[idx_ground]
+        segmented_cloud = points[idx_segmented]
         return ground_cloud,segmented_cloud,idx_ground,idx_segmented
 
     if method == 'brutal':
         idx_ground = []
         idx_segmented = []
-        for i in range(len(data)):
-            if(data[i][2] >= 0.00000001):
+        for i in range(len(points)):
+            if(points[i][2] >= 0.00000001):
                 idx_segmented.append(i)
             else:
                 idx_ground.append(i)
-        ground_cloud = data[idx_ground]
-        segmented_cloud = data[idx_segmented]
+        ground_cloud = points[idx_ground]
+        segmented_cloud = points[idx_segmented]
         return ground_cloud,segmented_cloud,idx_ground,idx_segmented

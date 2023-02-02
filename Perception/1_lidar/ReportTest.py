@@ -29,17 +29,16 @@ y = points[:, 1]  # y position of point
 z = points[:, 2]  # z position of point
 r = points[:, 3]  # reflectance value of point
 d = np.sqrt(x ** 2 + y ** 2)  # Map Distance from sensor
-degr = np.degrees(np.arctan(z / d))
-# vals = 'height'
-# if vals == "height":
-#     col = z
-# else:
-#     col = d
 
 #Clustering
-method = 'kmeans'  #Options: 'dbscan','kmeans','optics','meanshift','AgglomerativeClustering', 'birch'
+method = 'dbscan'  #Options: 'dbscan','kmeans','optics','meanshift','AgglomerativeClustering', 'birch'
+testlabels = clustering(points[:,0:3], method)
+vis(points[:,0:3],testlabels,[],method='o3d')
+
+method = 'dbscan'  #Options: 'dbscan','kmeans','optics','meanshift','AgglomerativeClustering', 'birch'
 labels = clustering(segmented_cloud, method)
 labels += 1
+
 #Add labels to the whole pointcloud
 points = np.insert(points,4,0,axis = 1)
 points[index_ground, 4] = 1

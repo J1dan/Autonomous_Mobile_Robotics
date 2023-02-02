@@ -1,7 +1,20 @@
 import open3d as o3d
 import numpy as np
 
-def ExtractBBox(points,labels,method):
+def ExtractBBox(points,labels,method='oriented'):
+    ''' Extract the axis-aligned or oriented bounding boxes from clustered point cloud
+    
+    Parameters
+    ----------
+    
+    `points` (`numpy.ndarray`): nx3 clustered point cloud
+      
+    `method` (`string`): method used. Options: `'axisAligned'`, `'oriented'`
+
+    Returns
+    -------
+    `bboxes` (`numpy.ndarray`): list of bounding boxes
+    '''
     if method == 'oriented':
         bboxes = []
         sortedLabels = np.unique(labels)
@@ -42,6 +55,3 @@ def ExtractBBox(points,labels,method):
             bboxes.append(bbox)
         bboxes = np.array(bboxes)
         return bboxes
-                
-
-        

@@ -5,13 +5,13 @@ import math
 import random
 import json
 import numpy as np 
-import open3d as o3d
 import sklearn.cluster
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from mpl_toolkits.mplot3d import art3d
+import open3d as o3d
 
 # sys.path.append(str(pathlib.Path('task1_lidar_cls.ipynb').parent.parent))
 from libraries.clustering import clustering
@@ -37,7 +37,7 @@ degr = np.degrees(np.arctan(z / d))
 #     col = d
 
 #Clustering
-method = 'kmeans'  #Options: 'dbscan','kmeans','optics','meanshift','AgglomerativeClustering', 'birch'
+method = 'birch'  #Options: 'dbscan','kmeans','optics','meanshift','Agglomerative', 'birch'
 labels = clustering(segmented_cloud, method)
 labels += 1
 #Add labels to the whole pointcloud
@@ -52,13 +52,19 @@ points = points[points[:,4] > 0]
 segmented_cloud = segmented_cloud[segmented_cloud[:,3] > 0]
 
 #Bounding Box Extraction
-axis_aligned_bboxes = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'axisAlighed')
-oriented_bboxes = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'oriented')
+axisAligned_bboxes, axisAligned_bboxes_vertices = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'axisAlighed')
+oriented_bboxes, oriented_bboxes_vertices = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'oriented')
 
-#Visualization
-vis(points[:,0:3],points[:,4],axis_aligned_bboxes,method='o3d')#With ground points
-vis(segmented_cloud[:,0:3],segmented_cloud[:,3],axis_aligned_bboxes,method='o3d')#Without ground points
-vis(segmented_cloud[:,0:3],segmented_cloud[:,3],axis_aligned_bboxes,method='plt')#With axis aligned bounding boxes
-vis(segmented_cloud[:,0:3],segmented_cloud[:,3],oriented_bboxes,method='plt')#With oriented bounding boxes
+# Visualization
+vis(points[:,0:3],points[:,4],axisAligned_bboxes_vertices,method='o3d')#With ground points
+vis(segmented_cloud[:,0:3],segmented_cloud[:,3],axisAligned_bboxes_vertices,method='o3d')#Without ground points
+vis(segmented_cloud[:,0:3],segmented_cloud[:,3],axisAligned_bboxes_vertices,method='plt')#With axis aligned bounding boxes
+vis(segmented_cloud[:,0:3],segmented_cloud[:,3],oriented_bboxes_vertices,method='plt')#With oriented bounding boxes
 
 #Data saving
+data = {}
+for i in range(len(axisAligned_bboxes_vertices)):
+    data[f'cluster {i}'] = axisAligned_bboxes_vertices[i].tolist()
+
+with open('lidar_clustering.json', 'w') as f:
+    json.dump(data, f)

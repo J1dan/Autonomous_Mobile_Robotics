@@ -28,7 +28,7 @@ def clustering(points, method='dbscan'):
         return labels_db
 
     if method == 'kmeans':
-        kmeans = sklearn.cluster.KMeans(n_clusters=70, random_state=0, n_init="auto").fit(points)
+        kmeans = sklearn.cluster.KMeans(n_clusters=60, random_state=0, n_init="auto").fit(points)
         labels_km = kmeans.labels_
         labels_unique = np.unique(labels_km)
         n_clusters_ = len(labels_unique)
@@ -37,7 +37,7 @@ def clustering(points, method='dbscan'):
 
     if method == 'meanshift':
         # The following bandwidth can be automatically detected using
-        bandwidth = sklearn.cluster.estimate_bandwidth(points, quantile=0.1, n_samples=500)
+        bandwidth = sklearn.cluster.estimate_bandwidth(points, quantile=0.1, n_samples=20)
 
         ms = sklearn.cluster.MeanShift(bandwidth=bandwidth, bin_seeding=True)
         ms.fit(points)
@@ -51,7 +51,7 @@ def clustering(points, method='dbscan'):
         return labels_ms
 
     if method == 'optics':
-        clust = sklearn.cluster.OPTICS(min_samples=6)
+        clust = sklearn.cluster.OPTICS(min_samples=3)
 
         # Run the fit
         clust.fit(points)
@@ -61,7 +61,7 @@ def clustering(points, method='dbscan'):
         print("number of estimated clusters : %d" % n_clusters_)
         return labels_op
 
-    if method == 'AgglomerativeClustering':
+    if method == 'Agglomerative':
         clustering = sklearn.cluster.AgglomerativeClustering(70).fit(points)
         labels_unique = np.unique(clustering.labels_)
         n_clusters_ = len(labels_unique)
@@ -69,7 +69,7 @@ def clustering(points, method='dbscan'):
         return clustering.labels_
 
     if method == 'birch':
-        brc = sklearn.cluster.Birch(n_clusters=65).fit(points)
+        brc = sklearn.cluster.Birch(n_clusters=70).fit(points)
         labels_brc = brc.predict(points)
         labels_unique = np.unique(labels_brc)
         n_clusters_ = len(labels_unique)

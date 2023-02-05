@@ -46,12 +46,12 @@ class PointCloudProcesser(object):
         segmented_cloud = segmented_cloud[segmented_cloud[:,3] > -1]
 
         #Bounding Box Extraction
-        # _, bboxes_vertices = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'axisAlighed')
-        _, bboxes_vertices = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'oriented')
+        # _, oriented_bboxes_vertices = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'axisAlighed')
+        _, oriented_bboxes_vertices = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'oriented')
 
         # Define the marker message
         marker_array = MarkerArray()
-        for i in range(len(bboxes_vertices)):
+        for i in range(len(oriented_bboxes_vertices)):
             marker = Marker()
             marker.id = i
             marker.header.frame_id = 'lidar_top'
@@ -62,21 +62,10 @@ class PointCloudProcesser(object):
             marker.color.g = 1.0
             marker.color.b = 1.0
             marker.color.a = 1.0
-            
-            #lines include each edge connected by the two vertices, thus 12 edges x 2 vertices = 24 vertices needed
-            line = np.array([bboxes_vertices[i][0] , bboxes_vertices[i][1] , \
-                             bboxes_vertices[i][1] , bboxes_vertices[i][2] , \
-                             bboxes_vertices[i][2] , bboxes_vertices[i][3] , \
-                             bboxes_vertices[i][3] , bboxes_vertices[i][0] , \
-                             bboxes_vertices[i][0] , bboxes_vertices[i][4] , \
-                             bboxes_vertices[i][4] , bboxes_vertices[i][5] , \
-                             bboxes_vertices[i][5] , bboxes_vertices[i][6] , \
-                             bboxes_vertices[i][6] , bboxes_vertices[i][7] , \
-                             bboxes_vertices[i][7] , bboxes_vertices[i][4] , \
-                             bboxes_vertices[i][3] , bboxes_vertices[i][7] , \
-                             bboxes_vertices[i][2] , bboxes_vertices[i][6] , \
-                             bboxes_vertices[i][1] , bboxes_vertices[i][5]])
+
+            line = np.array([oriented_bboxes_vertices[i][0] , oriented_bboxes_vertices[i][1] , oriented_bboxes_vertices[i][1] , oriented_bboxes_vertices[i][2] , oriented_bboxes_vertices[i][2] , oriented_bboxes_vertices[i][3] , oriented_bboxes_vertices[i][3] , oriented_bboxes_vertices[i][0] , oriented_bboxes_vertices[i][0] , oriented_bboxes_vertices[i][4] , oriented_bboxes_vertices[i][4] , oriented_bboxes_vertices[i][5] , oriented_bboxes_vertices[i][5] , oriented_bboxes_vertices[i][6] , oriented_bboxes_vertices[i][6] , oriented_bboxes_vertices[i][7] , oriented_bboxes_vertices[i][7] , oriented_bboxes_vertices[i][4] , oriented_bboxes_vertices[i][3], oriented_bboxes_vertices[i][7], oriented_bboxes_vertices[i][2] , oriented_bboxes_vertices[i][6] , oriented_bboxes_vertices[i][1] , oriented_bboxes_vertices[i][5]])
             lines = [Point(x, y, z) for x, y, z in line]
+            # marker.points = vertices
             marker.points = lines
             marker_array.markers.append(marker)
         self.marker_publisher.publish(marker_array)

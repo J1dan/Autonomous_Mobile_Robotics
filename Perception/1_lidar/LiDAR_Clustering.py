@@ -37,7 +37,7 @@ degr = np.degrees(np.arctan(z / d))
 #     col = d
 
 #Clustering
-method = 'birch'  #Options: 'dbscan','kmeans','optics','meanshift','Agglomerative', 'birch'
+method = 'dbscan'  #Options: 'dbscan','kmeans','optics','meanshift','Agglomerative', 'birch'
 labels = clustering(segmented_cloud, method)
 labels += 1
 #Add labels to the whole pointcloud

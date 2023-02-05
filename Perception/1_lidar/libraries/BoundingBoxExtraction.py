@@ -3,13 +3,15 @@ import numpy as np
 
 #Axis-aligned Bounding box class
 class AxisAlignedBoundingBox(object):
-    def __init__(self, vertices, center, size):
+    def __init__(self, vertices, center, size, time_step=0):
+        self.time_step = time_step
         self.vertices = vertices
         self.center = center
         self.size = size
 
 class OrientedBoundingBox(object):
-    def __init__(self, vertices, center, max_bound, min_bound):
+    def __init__(self, vertices, center, max_bound, min_bound, time_step = 0):
+        self.time_step = time_step
         self.vertices = vertices
         self.center = center
         self.center = center

@@ -17,14 +17,13 @@ def clustering(points, method='dbscan'):
     `labels` (`numpy.ndarray`): labels of each point
     '''
     if method == 'dbscan':
-        db = sklearn.cluster.DBSCAN(eps=2,min_samples=3).fit(points)#eps=1.8, min_samples=20
+        db = sklearn.cluster.DBSCAN(eps=1.5,min_samples=10).fit(points)#eps=1.8, min_samples=20
         labels_db = db.labels_
-
         # Number of clusters in labels, ignoring noise if present.
         n_clusters_ = len(set(labels_db)) - (1 if -1 in labels_db else 0)
         n_noise_ = list(labels_db).count(-1)
-        print("Estimated number of clusters: %d" % n_clusters_)
-        print("Estimated number of noise points: %d" % n_noise_)
+        # print("Estimated number of clusters: %d" % n_clusters_)
+        # print("Estimated number of noise points: %d" % n_noise_)
         return labels_db
 
     if method == 'kmeans':

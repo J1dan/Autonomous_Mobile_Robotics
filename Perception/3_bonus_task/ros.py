@@ -1,77 +1,77 @@
 import rospy
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs import point_cloud2
+from visualization_msgs.msg import Marker, MarkerArray
+from geometry_msgs.msg import Point
 import numpy as np
-import os
 import sys
 import pathlib
-import open3d as o3d
 import matplotlib.pyplot as plt
-import sklearn.cluster
-from sklearn import metrics
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from mpl_toolkits.mplot3d import art3d
+
 sys.path.append(str(pathlib.Path(__file__).parent.parent))
 from libraries.clustering import clustering
-from libraries.ground_segmentation import ground_segmentation
-from libraries.visualization import vis 
+from libraries.ground_segmentation import ground_segmentation 
 from libraries.BoundingBoxExtraction import ExtractBBox
 
-class PointCloudSubscriber(object):
+class PointCloudProcesser(object):
     def __init__(self) -> None:
         self.sub = rospy.Subscriber("me5413/lidar_top",
                                      PointCloud2,
-                                     self.callback, queue_size=10)
+                                     self.callback, queue_size=1)
+
+        self.marker_publisher = rospy.Publisher('bounding_box_marker', MarkerArray, queue_size=1)
+        self.i = 0
+
     def callback(self, msg):
-        assert isinstance(msg, PointCloud2)
+        self.i+=1
+        if self.i != 4:
+            return
+        else:
+            self.i = 0
         
         points = point_cloud2.read_points_list(
             msg, field_names=("x", "y", "z"))
         points = np.array(points)
 
         #Ground segmentation
-        ground_cloud,segmented_cloud, index_ground, index_segmented = ground_segmentation(points[:,0:3],'brutal')
-        x = points[:, 0]  # x position of point
-        y = points[:, 1]  # y position of point
-        z = points[:, 2]  # z position of point
-        d = np.sqrt(x ** 2 + y ** 2)  # Map Distance from sensor
-        degr = np.degrees(np.arctan(z / d))
-        # vals = 'height'
-        # if vals == "height":
-        #     col = z
-        # else:
-        #     col = d
+        _ ,segmented_cloud, _, _ = ground_segmentation(points[:,0:3],'brutal')
 
         #Clustering
-        method = 'dbscan'  #Options: 'dbscan','kmeans','optics','meanshift','AgglomerativeClustering', 'birch'
-        labels = clustering(segmented_cloud, method)
-        labels += 1
-        #Add labels to the whole pointcloud
-        points = np.insert(points,3,0,axis = 1)
-        points[index_ground, 3] = 1
-        points[index_segmented, 3] = labels
+        labels = clustering(segmented_cloud, 'dbscan')
         #Add labels to the segmented pointcloud
         segmented_cloud = np.insert(segmented_cloud,3,0,axis = 1)
         segmented_cloud[:,3] = labels
         #Noise removal
-        points = points[points[:,3] > 0]
-        segmented_cloud = segmented_cloud[segmented_cloud[:,3] > 0]
+        # points = points[points[:,3] > 0]
+        segmented_cloud = segmented_cloud[segmented_cloud[:,3] > -1]
 
         #Bounding Box Extraction
-        axis_aligned_bboxes = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'axisAlighed')
-        oriented_bboxes = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'oriented')
+        # _, oriented_bboxes_vertices = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'axisAlighed')
+        _, oriented_bboxes_vertices = ExtractBBox(segmented_cloud[:,0:3], segmented_cloud[:,3],'oriented')
 
-        #Visualization
-        vis(points[:,0:3],points[:,3],axis_aligned_bboxes,method='o3d')#With ground points
-        vis(segmented_cloud[:,0:3],segmented_cloud[:,3],axis_aligned_bboxes,method='o3d')#Without ground points
-        # vis(segmented_cloud[:,0:3],segmented_cloud[:,3],axis_aligned_bboxes,method='plt')#With axis aligned bounding boxes
-        # vis(segmented_cloud[:,0:3],segmented_cloud[:,3],oriented_bboxes,method='plt')#With oriented bounding boxes
+        # Define the marker message
+        marker_array = MarkerArray()
+        for i in range(len(oriented_bboxes_vertices)):
+            marker = Marker()
+            marker.id = i
+            marker.header.frame_id = 'lidar_top'
+            marker.type = marker.LINE_LIST
+            marker.action = marker.ADD
+            marker.scale.x = 0.1 # Line width
+            marker.color.r = 1.0
+            marker.color.g = 1.0
+            marker.color.b = 1.0
+            marker.color.a = 1.0
 
+            line = np.array([oriented_bboxes_vertices[i][0] , oriented_bboxes_vertices[i][1] , oriented_bboxes_vertices[i][1] , oriented_bboxes_vertices[i][2] , oriented_bboxes_vertices[i][2] , oriented_bboxes_vertices[i][3] , oriented_bboxes_vertices[i][3] , oriented_bboxes_vertices[i][0] , oriented_bboxes_vertices[i][0] , oriented_bboxes_vertices[i][4] , oriented_bboxes_vertices[i][4] , oriented_bboxes_vertices[i][5] , oriented_bboxes_vertices[i][5] , oriented_bboxes_vertices[i][6] , oriented_bboxes_vertices[i][6] , oriented_bboxes_vertices[i][7] , oriented_bboxes_vertices[i][7] , oriented_bboxes_vertices[i][4] , oriented_bboxes_vertices[i][3], oriented_bboxes_vertices[i][7], oriented_bboxes_vertices[i][2] , oriented_bboxes_vertices[i][6] , oriented_bboxes_vertices[i][1] , oriented_bboxes_vertices[i][5]])
+            lines = [Point(x, y, z) for x, y, z in line]
+            # marker.points = vertices
+            marker.points = lines
+            marker_array.markers.append(marker)
+        self.marker_publisher.publish(marker_array)
 
 if __name__ =='__main__':
-    rospy.init_node("pointcloud_subscriber")
-    PointCloudSubscriber()
+    rospy.init_node("pointcloud_processor")
+    PointCloudProcesser()
     rospy.spin()
 

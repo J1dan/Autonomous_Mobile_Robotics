@@ -7,6 +7,21 @@
 * sklearn
 * json
 
+## Usage
+1. Install the required libraries using pip, or 
+* using conda:
+
+   ```conda env create -f environment.yml```
+
+2. Run the python or jupiter script in the folders
+
+   `cd Perception`
+
+   ```cd 1_lidar```
+
+   ```python LiDAR_Clustering.py ```
+
+
 ## Demonstration
 
 ### LiDAR clustering

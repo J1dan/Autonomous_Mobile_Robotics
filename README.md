@@ -11,15 +11,23 @@
 1. Install the required libraries using pip, or 
 * using conda:
 
-   ```conda env create -f environment.yml```
+   ```terminal
+   conda env create -f environment.yml
+   ```
 
 2. Run the python or jupiter script in the folders
 
-   `cd Perception`
+   ```bash
+   cd Perception
+   ```
 
-   ```cd 1_lidar```
+   ```bash
+   cd 1_lidar
+   ```
 
-   ```python LiDAR_Clustering.py ```
+   ```terminal
+   python LiDAR_Clustering.py
+   ```
 
 
 ## Demonstration

@@ -34,9 +34,9 @@
    cd ICP
    ```
 
-    ***Argument 1***: task: *task1*, *task2*
+    ***Argument 1***: --task: *task1*, *task2*
 
-    ***Argument 2***: method: for task1, *none*, *downSampling*; for task2, *none*, *downSampling*, *globalReg*, *combined*
+    ***Argument 2***: --method: for task1, *none*, *downSampling*; for task2, *none*, *downSampling*, *globalReg*, *combined*
 
 
    ```terminal

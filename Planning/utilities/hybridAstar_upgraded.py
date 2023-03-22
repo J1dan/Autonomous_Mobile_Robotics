@@ -104,7 +104,7 @@ class hybridAstarPlanner(AstarPlanner):
 
                     if not self.is_valid_hybrid_node(next_state[0], next_state[1]):
                         continue
-                    next_g_cost = current.g_cost + self.car_cost(traj[0], traj[-1])
+                    next_g_cost = current.g_cost + self.car_cost(traj[0], traj[i])
                     next_h_cost = self.calculate_h(next_state[0:2], end)
                     next_node = self.hybrid_node(next_state, np.array(traj)[:i,0], np.array(traj)[:i,1], np.array(traj)[:,2], next_g_cost, next_h_cost, current)
                     for node in open_list:

@@ -32,7 +32,6 @@ print(f"distance list: {distances_total}")
 print(f"Avg time consumed: {avg_time}")
 print(f"Avg length of path: {avg_distance}")
 print(f"Success rate: {100*round(success_rate, 2)}%")
-print(paths[1])
 # Visualize the map and paths
 fig, ax = plt.subplots(figsize=(10,10))
 ax.imshow(grid_map, cmap='gray')

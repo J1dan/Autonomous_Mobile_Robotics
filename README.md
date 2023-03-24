@@ -1,11 +1,47 @@
 # Autonomous_Mobile_Robotics
 
 ## Dependencies
-* Python>=3.8
+* Python>=3.6
 * ROS Melodic/Noetic
-* open3d
+* Open3d
 * sklearn
 * json
+
+## Usage
+1. Install the required libraries using pip, or 
+* using conda:
+
+   ```terminal
+   conda env create -f environment.yml
+   ```
+
+2. Run the python or jupiter script in the folders
+* Clustering
+   ```bash
+   cd Perception
+   ```
+
+   ```bash
+   cd 1_lidar
+   ```
+
+   ```terminal
+   python LiDAR_Clustering.py
+   ```
+
+* ICP
+   ```terminal
+   cd ICP
+   ```
+
+    ***Argument 1***: --task: *task1*, *task2*
+
+    ***Argument 2***: --method: for task1, *none*, *downSampling*; for task2, *none*, *downSampling*, *globalReg*, *combined*
+
+
+   ```terminal
+   python ICP.py --task=task1 --method=downSampling
+   ```
 
 ## Demonstration
 
@@ -25,7 +61,11 @@
 
 <br>
 
-### ROS implementation
+### Clustering ROS implementation
 
 <img src="Perception/Examples/output1.gif" width="400"/>
-<img src="Perception/Examples/output2.gif" width="400"/>
+
+<br>
+
+### ICP
+<img src="ICP/Example/combined2.png" width="350"/> <-- Applying ICP with down-sampling and global registration for 60 iterations

@@ -16,6 +16,7 @@
    ```
 
 2. Run the python or jupiter script in the folders
+
 * Clustering
    ```bash
    cd Perception
@@ -43,6 +44,13 @@
    python ICP.py --task=task1 --method=downSampling
    ```
 
+* Planning
+   ```terminal
+   python Planning/src/plan.py 
+   ```
+
+   *You can select different planners in plan.py*
+
 ## Demonstration
 
 ### LiDAR clustering
@@ -69,3 +77,9 @@
 
 ### ICP
 <img src="ICP/Example/combined2.png" width="350"/> <-- Applying ICP with down-sampling and global registration for 60 iterations
+
+### A* algorithm and its variations
+<img src="Planning/Examples/a_h_exp.png" width="350"/> <-- Node expansion of hybrid-A*
+
+<img src="Planning/Examples/bidirectional.png" width="350"/> <-- Paths planned by bidirectional-A*
+<img src="Planning/Examples/bf.png" width="350"/> <-- Optimal path for traveling seller problem solved by brute-force method

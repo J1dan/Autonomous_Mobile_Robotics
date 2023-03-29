@@ -1,4 +1,7 @@
 import numpy as np
+import sys
+import pathlib
+sys.path.append(str(pathlib.Path(__file__).parent.parent))
 from utilities.Astar import AstarPlanner
 from utilities.hybridAstar_upgraded import hybridAstarPlanner
 from utilities.Dikstra import DijkstraPlanner
@@ -6,15 +9,24 @@ from utilities.greedyBest import greedyPlanner
 from utilities.bidirectionalAstar import bidirectionalAstarPlanner
 from utilities.switchAstar import switchAstarPlanner
 from utilities.utility import inflate_map
+from utilities.utility import TSP
+from utilities.utility import visPath
 from utilities.utility import plan_all_paths
 import imageio
 import matplotlib.pyplot as plt
 
-start = (345, 95)
-snacks = (470, 475)
-store = (20, 705)
-movie = (940, 545)
-food = (535, 800)
+# Locations on the map
+locations = {'start': (345, 95),    # Start from the level 2 Escalator
+             'snacks': (470, 475),  # Garrett Popcorn
+             'store': (20, 705),    # DJI Store
+             'movie': (940, 545),   # Golden Village
+             'food': (535, 800),    # PUTIEN
+            }
+start = locations['start']
+snacks = locations['snacks']
+store = locations['store']
+movie = locations['movie']
+food = locations['food']
 
 points = [start, snacks, store, movie, food]
 # points = [start, store]
@@ -25,7 +37,7 @@ grid_map = imageio.imread('./Planning/map/vivocity_freespace.png')
 # Preprocess the map
 inflated_map = inflate_map(grid_map)
 
-planner = hybridAstarPlanner(inflated_map, connectivity=8, visualization=False)
+planner = AstarPlanner(inflated_map, connectivity=8, visualization=False)
 
 paths, distances_total, visited_cells_list, avg_time, avg_distance, success_rate = plan_all_paths(points, planner)
 print(f"distance list: {distances_total}")
@@ -45,5 +57,11 @@ for i, path in enumerate(paths):
         path_array = np.array(path)
         ax.plot(path_array[:,0], path_array[:,1], color=colors[i % len(colors)], linewidth=2, alpha=0.7)
 
-ax.set_title('Occupancy Grid Map')
-plt.show()
+# Traveling Seller Problem
+
+# Distance matrix
+distances = np.array(distances_total)
+
+optimalRoute = TSP(paths, distances, 'nearestNeighbor') # Options: 'bruteForce', 'nearestNeighbor'
+
+visPath(locations, optimalRoute, grid_map)

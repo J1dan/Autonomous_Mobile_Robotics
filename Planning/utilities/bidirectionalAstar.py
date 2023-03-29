@@ -88,23 +88,29 @@ class bidirectionalAstarPlanner(AstarPlanner):
             neighbors_b = [(current_backward.state[0] + dx, current_backward.state[1] + dy) for dx in range(-1, 2) for dy in range(-1, 2) if dx != 0 or dy != 0]
 
             if self.connectivity == 4:
+                # Get neighbors that are within 4-connectivity distance
                 neighbors_f = [(x, y) for x, y in neighbors_f if abs(x - current_forward.state[0]) + abs(y - current_forward.state[1]) <= 1]
                 neighbors_b = [(x, y) for x, y in neighbors_b if abs(x - current_backward.state[0]) + abs(y - current_backward.state[1]) <= 1]
 
+            # Check neighbors and update path
             for neighbor in neighbors_f:
                 if self.is_valid_point(neighbor) and neighbor not in self.visited_forward:
+                    # Calculate g-value, the cost from the start node to neighbor
                     g = current_forward.g_cost + self.calculate_g(neighbor, current_forward.state)
+                    # Check if the neighbor is already in the open list
                     in_open_list = False
                     for node_in_list in open_list_forward:
                         if node_in_list.state == neighbor:
                             in_open_list = True
+                            # Update g-value and parent node if the neighbor is already in the open list
                             if g < node_in_list.g_cost:
                                 node_in_list.g_cost = g
                                 node_in_list.parent = current_forward
                             break
+                    # If neighbor is not in the open list, add it to the open list
                     if not in_open_list:
-                        h = self.calculate_h(neighbor, end)
-                        neighbor_node = self.node(neighbor, g, h, current_forward)
+                        h = self.calculate_h(neighbor, end) # Calculate h-value, the estimated cost from the neighbor to the goal node
+                        neighbor_node = self.node(neighbor, g, h, current_forward) # Create a node for the neighbor
                         open_list_forward.append(neighbor_node)
 
                         if self.visualization:
@@ -128,9 +134,12 @@ class bidirectionalAstarPlanner(AstarPlanner):
 
                         if self.visualization:
                             plt.plot(neighbor_node.state[0], neighbor_node.state[1], "bo")
+            # Check if the algorithm has run for more than 90 seconds
             if time.time()-start_time >= 90:
                 print(f"Run out of time, no path between {start} and {end} found.")
                 break
             if self.visualization:
                 plt.pause(0.001)
+
+        # If there is no path found within the time limit, return None
         return None, self.visited_forward.union(self.visited_backward), 0

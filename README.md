@@ -69,7 +69,7 @@
 
 <br>
 
-### Clustering ROS implementation
+### ROS Clustering implementation
 
 <img src="Perception/Examples/output1.gif" width="400"/>
 
